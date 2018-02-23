@@ -1,9 +1,12 @@
 from tensorflow.python.keras._impl.keras.applications import ResNet50
+import os
 
 from keras_audio.library.resnet import ResNet50AudioClassifier
+from keras_audio.library.utility.gtzan_loader import download_gtzan_genres_if_not_found
 
 
 def load_audio_path_label_pairs(max_allowed_pairs=None):
+    download_gtzan_genres_if_not_found('../very_large_data/gtzan')
     audio_paths = []
     with open('./data/lists/test_songs_gtzan_list.txt', 'rt') as file:
         for line in file:
