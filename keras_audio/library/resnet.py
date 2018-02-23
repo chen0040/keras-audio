@@ -52,13 +52,13 @@ def identity_block(X, f, filters, stage, block):
     X = Conv2D(filters=F1, kernel_size=(1, 1), strides=(1, 1), padding='valid', name=conv_name_base + '2a',
                kernel_initializer=glorot_uniform(seed=0))(X)
     X = BatchNormalization(axis=3, name=bn_name_base + '2a')(X)
-    X = Activation('relu')(X)
+    X = Activation('elu')(X)
 
     # Second component of main path (≈3 lines)
     X = Conv2D(filters=F2, kernel_size=(f, f), strides=(1, 1), padding='same', name=conv_name_base + '2b',
                kernel_initializer=glorot_uniform(seed=0))(X)
     X = BatchNormalization(axis=3, name=bn_name_base + '2b')(X)
-    X = Activation('relu')(X)
+    X = Activation('elu')(X)
 
     # Third component of main path (≈2 lines)
     X = Conv2D(filters=F3, kernel_size=(1, 1), strides=(1, 1), padding='valid', name=conv_name_base + '2c',
@@ -67,7 +67,7 @@ def identity_block(X, f, filters, stage, block):
 
     # Final step: Add shortcut value to main path, and pass it through a RELU activation (≈2 lines)
     X = Add()([X, X_shortcut])
-    X = Activation('relu')(X)
+    X = Activation('elu')(X)
 
     return X
 
@@ -115,13 +115,13 @@ def convolutional_block(X, f, filters, stage, block, s=2):
     X = Conv2D(F1, (1, 1), padding='valid', strides=(s, s), name=conv_name_base + '2a',
                kernel_initializer=glorot_uniform(seed=0))(X)
     X = BatchNormalization(axis=3, name=bn_name_base + '2a')(X)
-    X = Activation('relu')(X)
+    X = Activation('elu')(X)
 
     # Second component of main path (≈3 lines)
     X = Conv2D(F2, (f, f), padding='same', strides=(1, 1), name=conv_name_base + '2b',
                kernel_initializer=glorot_uniform(seed=0))(X)
     X = BatchNormalization(axis=3, name=bn_name_base + '2b')(X)
-    X = Activation('relu')(X)
+    X = Activation('elu')(X)
 
     # Third component of main path (≈2 lines)
     X = Conv2D(F3, (1, 1), padding='valid', strides=(1, 1), name=conv_name_base + '2c',
@@ -135,7 +135,7 @@ def convolutional_block(X, f, filters, stage, block, s=2):
 
     # Final step: Add shortcut value to main path, and pass it through a RELU activation (≈2 lines)
     X = Add()([X, X_shortcut])
-    X = Activation('relu')(X)
+    X = Activation('elu')(X)
 
     return X
 
@@ -176,7 +176,7 @@ def resnet_50(input_shape=(64, 64, 3), classes=6):
     # Stage 1
     X = Conv2D(64, (7, 7), strides=(2, 2), name='conv1', kernel_initializer=glorot_uniform(seed=0))(X)
     X = BatchNormalization(axis=3, name='bn_conv1')(X)
-    X = Activation('relu')(X)
+    X = Activation('elu')(X)
     X = MaxPooling2D((3, 3), strides=(2, 2))(X)
 
     # Stage 2

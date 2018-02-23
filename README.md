@@ -11,6 +11,9 @@ DCnn architecture to classifier audios based on its associated labels.
 * The classifier [Cifar10AudioClassifier](keras_audio/library/cifar10.py) converts audio into mel-spectrogram and uses the cifar-10
 DCnn architecture to classifier audios based on its associated labels. 
 
+The classifiers differ from those used in image classification in that they use ELU instead RELU and has elongated 
+max pooling shape (as the mel-spectrogram is elongated "image")
+
 # Usage
 
 ### Audio Classification
@@ -59,7 +62,7 @@ def main():
     print('loaded: ', len(audio_path_label_pairs))
 
     classifier = ResNet50AudioClassifier()
-    batch_size = 64
+    batch_size = 2
     epochs = 10
     history = classifier.fit(audio_path_label_pairs, model_dir_path='./models', batch_size=batch_size, epochs=epochs)
 
