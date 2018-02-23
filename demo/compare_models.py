@@ -16,7 +16,7 @@ def main():
         history_file_path = os.path.join(model_dir_path, history_file_name)
         history = np.load(history_file_path).item()
         labels_not_set = len(labels) == 0
-        for index in range(0, 20, 2):
+        for index in range(0, 100, 2):
             acc_data = history['acc']
             val_acc_data = history['val_acc']
             epoch = min(len(acc_data)-1, index)

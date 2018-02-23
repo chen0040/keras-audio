@@ -78,12 +78,12 @@ After training, the trained models are saved to [demo/models](demo/models).
 
 * The training accuracy reached over 80% after 29 epochs.
 * The training accuracy reached over 90% after 38 epochs.
-* The training accuracy after 100 epochs is , with validation accuracy of . 
+* The training accuracy after 100 epochs is 98.13%, with validation accuracy of 71%. 
 
 
 Below shows the training progress:
 
-![training-comppare](demo/models)
+![training-comppare](demo/models/training-history-comparison.png)
 
 
 
