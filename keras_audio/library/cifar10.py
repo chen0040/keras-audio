@@ -24,30 +24,43 @@ from keras_audio.library.utility.audio_utils import compute_melgram
 
 
 def cifar10(input_shape, nb_classes):
+    channel_axis = 3
+    freq_axis = 1
+    time_axis = 2
+
     model = Sequential()
     model.add(Conv2D(filters=32, input_shape=input_shape, padding='same', kernel_size=(3, 3)))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(BatchNormalization(axis=channel_axis))
+    model.add(Activation('elu'))
+    model.add(MaxPooling2D(pool_size=(2, 4)))
 
     model.add(Conv2D(filters=32, padding='same', kernel_size=(3, 3)))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(BatchNormalization(axis=channel_axis))
+    model.add(Activation('elu'))
+    model.add(MaxPooling2D(pool_size=(2, 4)))
 
     model.add(Dropout(rate=0.25))
 
     model.add(Conv2D(filters=64, kernel_size=(3, 3), padding='same', input_shape=input_shape))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(BatchNormalization(axis=channel_axis))
+    model.add(Activation('elu'))
+    model.add(MaxPooling2D(pool_size=(2, 4)))
 
-    model.add(Conv2D(filters=64, padding='same', kernel_size=(3, 3)))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(filters=128, padding='same', kernel_size=(3, 3)))
+    model.add(BatchNormalization(axis=channel_axis))
+    model.add(Activation('elu'))
+    model.add(MaxPooling2D(pool_size=(3, 5)))
+
+    model.add(Conv2D(filters=256, padding='same', kernel_size=(3, 3)))
+    model.add(BatchNormalization(axis=channel_axis))
+    model.add(Activation('elu'))
+    model.add(MaxPooling2D(pool_size=(4, 4)))
 
     model.add(Dropout(rate=0.25))
 
     model.add(Flatten())
     model.add(Dense(units=512))
-    model.add(Activation('relu'))
+    model.add(Activation('elu'))
     model.add(Dropout(rate=0.5))
     model.add(Dense(units=nb_classes))
     model.add(Activation('softmax'))
@@ -99,7 +112,7 @@ class Cifar10AudioClassifier(object):
             return self.cache[audio_path]
         else:
             mg = compute_melgram(audio_path)
-            mg = (mg + 100) / 200  # scale the values
+            # mg = (mg + 100) / 200  # scale the values
             self.cache[audio_path] = mg
             return mg
 
