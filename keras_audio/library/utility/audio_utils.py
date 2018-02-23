@@ -1,12 +1,20 @@
 import librosa
 import numpy as np
 from math import floor
+import os
 
 
 def compute_melgram(audio_path):
     """ Compute a mel-spectrogram and returns it in a shape of (96,1366, 1), where
        96 == #mel-bins and 1366 == #time frame
     """
+
+    mg_path = audio_path + '-mg.npy'
+
+    if os.path.exists(mg_path):
+        return np.load(mg_path)
+
+    print('computing mel-spetrogram for audio: ', audio_path)
 
     # mel-spectrogram parameters
     sampling_rate = 12000
@@ -29,6 +37,9 @@ def compute_melgram(audio_path):
                         n_fft=n_fft, n_mels=n_mels) ** 2,
                 ref=1.0)
     ret = np.expand_dims(ret, axis=2)
+
+    np.save(mg_path, ret)
+
     return ret
 
 

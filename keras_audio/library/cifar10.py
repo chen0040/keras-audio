@@ -58,17 +58,17 @@ def cifar10(input_shape, nb_classes):
 
 
 class Cifar10AudioClassifier(object):
-    model_name = 'resnet50'
+    model_name = 'cifar10'
 
     def __init__(self):
-        self.cache = LRU(1000)
+        self.cache = LRU(400)
         self.input_shape = None
         self.nb_classes = None
         self.model = None
         self.config = None
 
     def create_model(self):
-        self.model = cifar10(input_shape=self.input_shape, classes=self.nb_classes)
+        self.model = cifar10(input_shape=self.input_shape, nb_classes=self.nb_classes)
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
         print(self.model.summary())

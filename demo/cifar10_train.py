@@ -1,4 +1,4 @@
-from keras_audio.library.resnet import ResNet50AudioClassifier
+from keras_audio.library.cifar10 import Cifar10AudioClassifier
 from keras_audio.library.utility.gtzan_loader import download_gtzan_genres_if_not_found
 
 
@@ -24,8 +24,8 @@ def main():
     audio_path_label_pairs = load_audio_path_label_pairs()
     print('loaded: ', len(audio_path_label_pairs))
 
-    classifier = ResNet50AudioClassifier()
-    batch_size = 32
+    classifier = Cifar10AudioClassifier()
+    batch_size = 8
     epochs = 10
     history = classifier.fit(audio_path_label_pairs, model_dir_path='./models', batch_size=batch_size, epochs=epochs)
 

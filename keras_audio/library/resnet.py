@@ -254,7 +254,7 @@ class ResNet50AudioClassifier(object):
     model_name = 'resnet50'
 
     def __init__(self):
-        self.cache = LRU(1000)
+        self.cache = LRU(400)
         self.input_shape = None
         self.nb_classes = None
         self.model = None
