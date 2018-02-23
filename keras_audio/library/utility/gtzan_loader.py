@@ -4,6 +4,9 @@ import tarfile
 
 from keras_audio.library.utility.download_utils import reporthook
 
+gtzan_labels = {0: 'blues', 1: 'classical', 2: 'country', 3: 'disco', 4: 'hiphop', 5: 'jazz', 6: 'metal',
+                7: 'pop', 8: 'reggae', 9: 'rock'}
+
 
 def download_gtzan_music_speech(data_dir_path):
     zip_file_path = data_dir_path + '/music_speech.tar.gz'

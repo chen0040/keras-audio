@@ -11,9 +11,10 @@ DCnn architecture to classifier audios based on its associated labels.
 * The classifier [Cifar10AudioClassifier](keras_audio/library/cifar10.py) converts audio into mel-spectrogram and uses the cifar-10
 DCnn architecture to classifier audios based on its associated labels. 
 
-The classifiers differ from those used in image classification in that they use ELU instead RELU. Other features such as
-* Cifar10AudioClassifier and ResNet50AudioClassifier has elongated max pooling shape (as the mel-spectrogram is elongated "image")
-* Dropout being added to ResNet50AudioClassifier and more dense layer after flattening.
+The classifiers differ from those used in image classification in that:
+* they use ELU instead RELU. 
+* they have elongated max pooling shape (as the mel-spectrogram is elongated "image")
+* Dropout being added 
 
 # Usage
 
@@ -29,14 +30,14 @@ To train on the Gtzan data set, run the following command:
 
 ```bash
 cd demo
-python resnet_train.py
+python cifar10_train.py
 ```
 
-The [sample codes](demo/resnet_train.py) below show how to train ResNet50Classifier to classify songs
+The [sample codes](demo/cifar10_train.py) below show how to train Cifar10AudioClassifier to classify songs
 based on its genre labels:
 
 ```python
-from keras_audio.library.resnet import ResNet50AudioClassifier
+from keras_audio.library.cifar10 import Cifar10AudioClassifier
 from keras_audio.library.utility.gtzan_loader import download_gtzan_genres_if_not_found
 
 
@@ -45,7 +46,7 @@ def load_audio_path_label_pairs(max_allowed_pairs=None):
     audio_paths = []
     with open('./data/lists/test_songs_gtzan_list.txt', 'rt') as file:
         for line in file:
-            audio_path = './very_large_data' + line.strip()
+            audio_path = './very_large_data/' + line.strip()
             audio_paths.append(audio_path)
     pairs = []
     with open('./data/lists/test_gt_gtzan_list.txt', 'rt') as file:
@@ -62,9 +63,9 @@ def main():
     audio_path_label_pairs = load_audio_path_label_pairs()
     print('loaded: ', len(audio_path_label_pairs))
 
-    classifier = ResNet50AudioClassifier()
-    batch_size = 2 # very small batch size due to my limited gpu memory, should increase
-    epochs = 10
+    classifier = Cifar10AudioClassifier()
+    batch_size = 8
+    epochs = 100
     history = classifier.fit(audio_path_label_pairs, model_dir_path='./models', batch_size=batch_size, epochs=epochs)
 
 
@@ -73,21 +74,33 @@ if __name__ == '__main__':
 
 ```
 
-After training, the trained models are saved to [demo/models](demo/models). To test the trained model, run
-the following command:
+After training, the trained models are saved to [demo/models](demo/models). 
+
+* The training accuracy reached over 80% after 29 epochs.
+* The training accuracy reached over 90% after 38 epochs.
+* The training accuracy after 100 epochs is , with validation accuracy of . 
+
+
+Below shows the training progress:
+
+![training-comppare](demo/models)
+
+
+
+To test the trained Cifar10AudioClassifier model, run the following command:
 
 ```bash
 cd demo
-python resnet_predict.py
+python cifar10_predict.py
 ```
 
-The [sample codes](demo/resnet_predict.py) shows how to test the trained ResNet50AudioClassifier model:
+The [sample codes](demo/cifar10_predict.py) shows how to test the trained Cifar10AudioClassifier model:
 
 ```python
 from random import shuffle
 
-from keras_audio.library.resnet import ResNet50AudioClassifier
-from keras_audio.library.utility.gtzan_loader import download_gtzan_genres_if_not_found
+from keras_audio.library.cifar10 import Cifar10AudioClassifier
+from keras_audio.library.utility.gtzan_loader import download_gtzan_genres_if_not_found, gtzan_labels
 
 
 def load_audio_path_label_pairs(max_allowed_pairs=None):
@@ -113,13 +126,16 @@ def main():
     shuffle(audio_path_label_pairs)
     print('loaded: ', len(audio_path_label_pairs))
 
-    classifier = ResNet50AudioClassifier()
+    classifier = Cifar10AudioClassifier()
     classifier.load_model(model_dir_path='./models')
 
     for i in range(0, 20):
-        audio_path, actual_label = audio_path_label_pairs[i]
-        predicted_label = classifier.predict_class(audio_path)
+        audio_path, actual_label_id = audio_path_label_pairs[i]
+        predicted_label_id = classifier.predict_class(audio_path)
         print(audio_path)
+        predicted_label = gtzan_labels[predicted_label_id]
+        actual_label = gtzan_labels[actual_label_id]
+        
         print('predicted: ', predicted_label, 'actual: ', actual_label)
 
 
@@ -149,5 +165,13 @@ cd demo/utility
 python gtzan_loader.py
 ```
 
+### audioread.NoBackend
+
+The audio processing depends on librosa version 0.6 which depends on audioread.  
+
+If you are on Windows and sees the error "audioread.NoBackend", go to [ffmpeg](https://ffmpeg.zeranoe.com/builds/)
+and download the shared linking build, unzip to a local directory and then add the bin folder of the 
+ffmpeg to the Windows $PATH environment variable. Restart your cmd or powershell, Python should now be
+able to locate the backend for audioread in librosa
 
 
