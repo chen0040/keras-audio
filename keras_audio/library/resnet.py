@@ -22,9 +22,6 @@ from lru import LRU
 from keras_audio.library.resnets_utils import convert_to_one_hot, load_dataset
 from keras_audio.library.utility.audio_utils import compute_melgram
 
-K.set_image_data_format('channels_last')
-K.set_learning_phase(1)
-
 
 def identity_block(X, f, filters, stage, block):
     """
@@ -265,6 +262,9 @@ class ResNet50AudioClassifier(object):
 
     def create_model(self):
         self.model = resnet_50(input_shape=self.input_shape, classes=self.nb_classes)
+        self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+        print(self.model.summary())
 
     @staticmethod
     def get_config_file_path(model_dir_path):
@@ -338,7 +338,7 @@ class ResNet50AudioClassifier(object):
 
         self.create_model()
 
-        with open(architecture_file_path, 'rt') as file:
+        with open(architecture_file_path, 'wt') as file:
             file.write(self.model.to_json())
 
         checkpoint = ModelCheckpoint(weight_file_path)

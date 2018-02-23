@@ -28,7 +28,7 @@ def compute_melgram(audio_path):
     ret = logam(melgram(y=src, sr=sampling_rate, hop_length=hop_length,
                         n_fft=n_fft, n_mels=n_mels) ** 2,
                 ref=1.0)
-    ret = ret[:, np.newaxis]
+    ret = np.expand_dims(ret, axis=2)
     return ret
 
 
