@@ -1,6 +1,6 @@
 from keras_audio.library.utility.audio_utils import compute_melgram
 from keras_audio.library.utility.gtzan_loader import download_gtzan_genres_if_not_found
-
+import numpy as np
 
 def load_audio_path_label_pairs(max_allowed_pairs=None):
     download_gtzan_genres_if_not_found('../very_large_data/gtzan')
@@ -24,7 +24,10 @@ def main():
     pairs = load_audio_path_label_pairs()
     for index, (audio_path, _) in enumerate(pairs):
         print('{} / {} ...'.format(index+1, len(pairs)))
-        compute_melgram(audio_path)
+        mg = compute_melgram(audio_path)
+        print('max: ', np.max(mg))
+        print('min: ', np.min(mg))
+
 
 
 if __name__ == '__main__':

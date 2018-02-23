@@ -109,7 +109,7 @@ class Cifar10AudioClassifier(object):
                 start = batchIdx * batch_size
                 end = (batchIdx + 1) * batch_size
 
-                X = np.zeros(shape=(batch_size, self.input_shape[0], self.input_shape[1], self.input_shape[2]))
+                X = np.zeros(shape=(batch_size, self.input_shape[0], self.input_shape[1], self.input_shape[2]), dtype=np.float32)
                 for i in range(start, end):
                     audio_path = audio_paths[i]
                     mg = compute_melgram(audio_path)
@@ -178,3 +178,12 @@ class Cifar10AudioClassifier(object):
 
         np.save(os.path.join(model_dir_path, Cifar10AudioClassifier.model_name + '-history.npy'), history.history)
         return history
+
+    def predict(self, audio_path):
+        mg = compute_melgram(audio_path)
+        mg = np.expand_dims(mg, axis=0)
+        return self.model.predict(mg)[0]
+
+    def predict_class(self, audio_path):
+        predicted = self.predict(audio_path)
+        return np.argmax(predicted)
