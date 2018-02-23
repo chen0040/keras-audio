@@ -36,7 +36,7 @@ def download_gtzan_genres_if_not_found(data_dir_path):
     tar.extractall(data_dir_path)
     tar.close()
 
-    with open(flag_file, 'rt') as file:
+    with open(flag_file, 'wt') as file:
         file.write('done')
 
 
