@@ -171,7 +171,7 @@ def resnet_50(input_shape=(64, 64, 3), classes=6):
     X_input = Input(input_shape)
 
     # Zero-Padding
-    # X = ZeroPadding2D((3, 3))(X_input)
+    X = ZeroPadding2D((3, 3))(X_input)
 
     # Stage 1
     X = Conv2D(64, (5, 7), strides=(2, 2), name='conv1', kernel_initializer=glorot_uniform(seed=0))(X)
@@ -208,7 +208,7 @@ def resnet_50(input_shape=(64, 64, 3), classes=6):
     # AVGPOOL (≈1 line). Use "X = AveragePooling2D(...)(X)"
     X = AveragePooling2D(pool_size=(2, 2), name='avg_pool')(X)
 
-    X = Dropout(rate=0.25)(X)
+    # X = Dropout(rate=0.25)(X)
 
     ### END CODE HERE ###
 
