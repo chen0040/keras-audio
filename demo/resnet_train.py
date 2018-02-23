@@ -6,7 +6,7 @@ from keras_audio.library.utility.gtzan_loader import download_gtzan_genres_if_no
 
 
 def load_audio_path_label_pairs(max_allowed_pairs=None):
-    download_gtzan_genres_if_not_found('../very_large_data/gtzan')
+    download_gtzan_genres_if_not_found('./very_large_data/gtzan')
     audio_paths = []
     with open('./data/lists/test_songs_gtzan_list.txt', 'rt') as file:
         for line in file:
