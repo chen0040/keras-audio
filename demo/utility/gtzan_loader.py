@@ -1,4 +1,4 @@
-from pydl_audio_encoders.library.utility.gtzan_loader import download_gtzan_genres
+from keras_audio.library.utility.gtzan_loader import download_gtzan_genres
 
 
 def main():

@@ -2,7 +2,7 @@ import urllib.request
 import os
 import tarfile
 
-from pydl_audio_encoders.library.utility.download_utils import reporthook
+from keras_audio.library.utility.download_utils import reporthook
 
 
 def download_gtzan_music_speech(data_dir_path):

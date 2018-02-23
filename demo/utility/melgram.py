@@ -1,7 +1,7 @@
 import os
 import matplotlib
 
-from pydl_audio_encoders.library.utility.audio_utils import compute_melgram
+from keras_audio.library.utility.audio_utils import compute_melgram
 
 matplotlib.use('Agg')  # No pictures displayed
 import pylab

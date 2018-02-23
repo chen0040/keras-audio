@@ -8,13 +8,13 @@ from keras.utils.data_utils import get_file
 from keras.applications.imagenet_utils import preprocess_input
 from keras.utils.vis_utils import model_to_dot
 from keras.utils import plot_model
-from keras_image_classifier.library.resnets_utils import *
+from keras_audio.library.resnets_utils import *
 from keras.initializers import glorot_uniform
 import scipy.misc
 import keras.backend as K
 import tensorflow as tf
 
-from keras_image_classifier.library.resnets_utils import convert_to_one_hot, load_dataset
+from keras_audio.library.resnets_utils import convert_to_one_hot, load_dataset
 
 K.set_image_data_format('channels_last')
 K.set_learning_phase(1)
