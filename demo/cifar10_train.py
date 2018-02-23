@@ -26,7 +26,7 @@ def main():
 
     classifier = Cifar10AudioClassifier()
     batch_size = 8
-    epochs = 10
+    epochs = 100
     history = classifier.fit(audio_path_label_pairs, model_dir_path='./models', batch_size=batch_size, epochs=epochs)
 
 
