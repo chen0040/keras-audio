@@ -99,6 +99,7 @@ class Cifar10AudioClassifier(object):
             return self.cache[audio_path]
         else:
             mg = compute_melgram(audio_path)
+            mg = (mg + 100) / 200  # scale the values
             self.cache[audio_path] = mg
             return mg
 
