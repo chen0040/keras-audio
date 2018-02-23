@@ -4,7 +4,7 @@ from math import floor
 
 
 def compute_melgram(audio_path):
-    """ Compute a mel-spectrogram and returns it in a shape of (96,1366), where
+    """ Compute a mel-spectrogram and returns it in a shape of (96,1366, 1), where
        96 == #mel-bins and 1366 == #time frame
     """
 
@@ -28,7 +28,7 @@ def compute_melgram(audio_path):
     ret = logam(melgram(y=src, sr=sampling_rate, hop_length=hop_length,
                         n_fft=n_fft, n_mels=n_mels) ** 2,
                 ref=1.0)
-    # ret = ret[np.newaxis, np.newaxis, :]
+    ret = ret[:, np.newaxis]
     return ret
 
 

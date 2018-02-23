@@ -1,20 +1,26 @@
 import numpy as np
 from keras import layers
-from keras.layers import Input, Add, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv2D, AveragePooling2D, MaxPooling2D, GlobalMaxPooling2D
+from keras.callbacks import ModelCheckpoint
+from keras.layers import Input, Add, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv2D, \
+    AveragePooling2D, MaxPooling2D, GlobalMaxPooling2D
 from keras.models import Model, load_model
 from keras.preprocessing import image
-from keras.utils import layer_utils
+from keras.utils import layer_utils, np_utils
 from keras.utils.data_utils import get_file
 from keras.applications.imagenet_utils import preprocess_input
 from keras.utils.vis_utils import model_to_dot
 from keras.utils import plot_model
+from sklearn.model_selection import train_test_split
+
 from keras_audio.library.resnets_utils import *
 from keras.initializers import glorot_uniform
 import scipy.misc
 import keras.backend as K
 import tensorflow as tf
+from lru import LRU
 
 from keras_audio.library.resnets_utils import convert_to_one_hot, load_dataset
+from keras_audio.library.utility.audio_utils import compute_melgram
 
 K.set_image_data_format('channels_last')
 K.set_learning_phase(1)
@@ -150,7 +156,7 @@ def convolutional_block_test():
         print("out = " + str(out[0][1][1][0]))
 
 
-def ResNet50(input_shape=(64, 64, 3), classes=6):
+def resnet_50(input_shape=(64, 64, 3), classes=6):
     """
     Implementation of the popular ResNet50 the following architecture:
     CONV2D -> BATCHNORM -> RELU -> MAXPOOL -> CONVBLOCK -> IDBLOCK*2 -> CONVBLOCK -> IDBLOCK*3
@@ -217,8 +223,8 @@ def ResNet50(input_shape=(64, 64, 3), classes=6):
     return model
 
 
-def ResNet50_test():
-    model = ResNet50(input_shape=(64, 64, 3), classes=6)
+def resnet_50_test():
+    model = resnet_50(input_shape=(64, 64, 3), classes=6)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     dataset_dir_path = '../training/resnet_datasets'
@@ -247,12 +253,131 @@ def ResNet50_test():
     print("Test Accuracy = " + str(preds[1]))
 
 
+class ResNet50AudioClassifier(object):
+    model_name = 'resnet50'
+
+    def __init__(self):
+        self.cache = LRU(1000)
+        self.input_shape = None
+        self.nb_classes = None
+        self.model = None
+        self.config = None
+
+    def create_model(self):
+        self.model = resnet_50(input_shape=self.input_shape, classes=self.nb_classes)
+
+    @staticmethod
+    def get_config_file_path(model_dir_path):
+        return os.path.join(model_dir_path, ResNet50AudioClassifier.model_name + '-config.npy')
+
+    @staticmethod
+    def get_architecture_file_path(model_dir_path):
+        return os.path.join(model_dir_path, ResNet50AudioClassifier.model_name + '-architecture.json')
+
+    @staticmethod
+    def get_weight_file_path(model_dir_path):
+        return os.path.join(model_dir_path, ResNet50AudioClassifier.model_name + '-weights.h5')
+
+    def load_model(self, model_dir_path):
+        config_file_path = ResNet50AudioClassifier.get_config_file_path(model_dir_path)
+        weight_file_path = ResNet50AudioClassifier.get_weight_file_path(model_dir_path)
+        self.config = np.load(config_file_path).item()
+        self.input_shape = self.config['input_shape']
+        self.nb_classes = self.config['nb_classes']
+        self.create_model()
+        self.model.load_weights(weight_file_path)
+
+    def compute_melgram(self, audio_path):
+        if audio_path in self.cache:
+            return self.cache[audio_path]
+        else:
+            mg = compute_melgram(audio_path)
+            self.cache[audio_path] = mg
+            return mg
+
+    def generate_batch(self, audio_paths, labels, batch_size):
+        num_batches = len(audio_paths) // batch_size
+        while True:
+            for batchIdx in range(0, num_batches):
+                start = batchIdx * batch_size
+                end = (batchIdx + 1) * batch_size
+
+                X = np.zeros(shape=(batch_size, self.input_shape[0], self.input_shape[1], self.input_shape[2]))
+                for i in range(start, end):
+                    audio_path = audio_paths[i]
+                    mg = compute_melgram(audio_path)
+                    X[i - start, :, :, :] = mg
+                yield X, labels[start:end]
+
+    def fit(self, audio_path_label_pairs, model_dir_path, batch_size=None, epochs=None, test_size=None,
+            random_state=None, input_shape=None, nb_classes=None):
+        if batch_size is None:
+            batch_size = 64
+        if epochs is None:
+            epochs = 20
+        if test_size is None:
+            test_size = 0.2
+        if random_state is None:
+            random_state = 42
+        if input_shape is None:
+            input_shape = (96, 1366, 1)
+        if nb_classes is None:
+            nb_classes = 10
+
+        config_file_path = ResNet50AudioClassifier.get_config_file_path(model_dir_path)
+        weight_file_path = ResNet50AudioClassifier.get_weight_file_path(model_dir_path)
+        architecture_file_path = ResNet50AudioClassifier.get_architecture_file_path(model_dir_path)
+
+        self.input_shape = input_shape
+        self.nb_classes = nb_classes
+
+        self.config = dict()
+        self.config['input_shape'] = input_shape
+        self.config['nb_classes'] = nb_classes
+        np.save(config_file_path, self.config)
+
+        self.create_model()
+
+        with open(architecture_file_path, 'rt') as file:
+            file.write(self.model.to_json())
+
+        checkpoint = ModelCheckpoint(weight_file_path)
+
+        X = []
+        Y = []
+
+        for audio_path, label in audio_path_label_pairs:
+            X.append(audio_path)
+            Y.append(label)
+
+        X = np.array(X)
+        Y = np.array(Y)
+
+        Y = np_utils.to_categorical(Y, self.nb_classes)
+
+        Xtrain, Xtest, Ytrain, Ytest = train_test_split(X, Y, test_size=test_size, random_state=random_state)
+
+        train_gen = self.generate_batch(Xtrain, Ytrain, batch_size)
+        test_gen = self.generate_batch(Xtest, Ytest, batch_size)
+
+        train_num_batches = len(Xtrain) // batch_size
+        test_num_batches = len(Xtest) // batch_size
+
+        history = self.model.fit_generator(generator=train_gen, steps_per_epoch=train_num_batches,
+                                           epochs=epochs,
+                                           verbose=1, validation_data=test_gen, validation_steps=test_num_batches,
+                                           callbacks=[checkpoint])
+        self.model.save_weights(weight_file_path)
+
+        np.save(os.path.join(model_dir_path, ResNet50AudioClassifier.model_name + '-history.npy'), history.history)
+        return history
+
+
 def main():
     identity_block_test()
     convolutional_block_test()
-    ResNet50_test()
+    resnet_50_test()
 
 
 if __name__ == '__main__':
     main()
-
