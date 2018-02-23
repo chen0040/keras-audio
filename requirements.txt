@@ -4,7 +4,7 @@ numpy
 librosa == 0.6
 h5py
 scikit-learn
-tensorflow-gpu
+tensorflow
 matplotlib
 pandas
 lru-dict
