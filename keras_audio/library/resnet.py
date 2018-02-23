@@ -118,7 +118,7 @@ def convolutional_block(X, f, filters, stage, block, s=2):
     X = Activation('elu')(X)
 
     # Second component of main path (≈3 lines)
-    X = Conv2D(F2, (f, f+2), padding='same', strides=(1, 1), name=conv_name_base + '2b',
+    X = Conv2D(F2, (f, f), padding='same', strides=(1, 1), name=conv_name_base + '2b',
                kernel_initializer=glorot_uniform(seed=0))(X)
     X = BatchNormalization(axis=3, name=bn_name_base + '2b')(X)
     X = Activation('elu')(X)
@@ -174,10 +174,10 @@ def resnet_50(input_shape=(64, 64, 3), classes=6):
     X = ZeroPadding2D((3, 3))(X_input)
 
     # Stage 1
-    X = Conv2D(64, (5, 7), strides=(2, 2), name='conv1', kernel_initializer=glorot_uniform(seed=0))(X)
+    X = Conv2D(64, (7, 7), strides=(2, 2), name='conv1', kernel_initializer=glorot_uniform(seed=0))(X)
     X = BatchNormalization(axis=3, name='bn_conv1')(X)
     X = Activation('elu')(X)
-    X = MaxPooling2D((3, 5), strides=(2, 2))(X)
+    X = MaxPooling2D((3, 3), strides=(2, 2))(X)
 
     # Stage 2
     X = convolutional_block(X, f=3, filters=[64, 64, 256], stage=2, block='a', s=1)
