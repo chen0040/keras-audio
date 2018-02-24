@@ -215,7 +215,7 @@ class Cifar10AudioClassifier(object):
             output_model_file = Cifar10AudioClassifier.model_name + '.pb'
 
         if output_graphdef_file is None:
-            output_node_prefix = 'model.ascii'
+            output_graphdef_file = 'model.ascii'
         if num_output is None:
             num_output = 1
         if output_node_prefix is None:
