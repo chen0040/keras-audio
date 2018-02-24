@@ -174,4 +174,27 @@ and download the shared linking build, unzip to a local directory and then add t
 ffmpeg to the Windows $PATH environment variable. Restart your cmd or powershell, Python should now be
 able to locate the backend for audioread in librosa
 
+### Export trained model as tensorflow pb model file
+
+To export the trained keras model as tensorflow graph model file, run the following command:
+
+```bash
+cd demo
+python cifar10_tensorflow_export_model.py
+```
+
+The script [demo/cifar10_tensorflow_export_model.py](demo/cifar10_tensorflow_export_model.py) export the trained model
+as [demo/mdoels/tensorflow_models/cifar10/cifar10.pb](demo/models/tensorflow_models/cifar10/cifar10.pb) 
+
+To test the exported tensorflow graph model file, run the following command:
+
+```bash
+cd demo
+python cifar10_tensorflow_classifier.py
+```
+
+The script [demo/cifar10_tensorflow_classifier.py](demo/cifar10_tensorflow_classifier.py) uses pure tensorflow code
+to load the [cifar10.pb](demo/models/tensorflow_models/cifar10/cifar10.pb) and uses it to predict genres of the 
+songs
+
 

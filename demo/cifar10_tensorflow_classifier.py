@@ -45,9 +45,11 @@ def main():
 
             predicted = sess.run(predict_op, feed_dict={"conv2d_1_input:0": mg})
 
-            predicted_label_idx = np.argmax(predicted, axis=1)
+            predicted_label_idx = np.argmax(predicted, axis=1)[0]
+            predicted_label = gtzan_labels[predicted_label_idx]
+            actual_label = gtzan_labels[actual_label_id]
 
-            print(predicted_label_idx)
+            print('predicted: ', predicted_label, 'actual: ', actual_label)
 
 
 if __name__ == '__main__':
