@@ -1,24 +1,16 @@
-import numpy as np
-from keras import layers
+from lru import LRU
+
+import keras.backend as K
+import tensorflow as tf
 from keras.callbacks import ModelCheckpoint
+from keras.initializers import glorot_uniform
 from keras.layers import Input, Add, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv2D, \
-    AveragePooling2D, MaxPooling2D, GlobalMaxPooling2D, Dropout
-from keras.models import Model, load_model
-from keras.preprocessing import image
-from keras.utils import layer_utils, np_utils
-from keras.utils.data_utils import get_file
-from keras.applications.imagenet_utils import preprocess_input
-from keras.utils.vis_utils import model_to_dot
-from keras.utils import plot_model
+    AveragePooling2D, MaxPooling2D
+from keras.models import Model
+from keras.utils import np_utils
 from sklearn.model_selection import train_test_split
 
 from keras_audio.library.resnets_utils import *
-from keras.initializers import glorot_uniform
-import scipy.misc
-import keras.backend as K
-import tensorflow as tf
-from lru import LRU
-
 from keras_audio.library.resnets_utils import convert_to_one_hot, load_dataset
 from keras_audio.library.utility.audio_utils import compute_melgram
 
