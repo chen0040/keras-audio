@@ -1,6 +1,6 @@
 from random import shuffle
 
-from keras_audio.library.resnet import ResNet50AudioClassifier
+from keras_audio.library.resnet50 import ResNet50AudioClassifier
 from keras_audio.library.utility.gtzan_loader import download_gtzan_genres_if_not_found, gtzan_labels
 
 

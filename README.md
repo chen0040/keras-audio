@@ -6,9 +6,11 @@ keras project for audio deep learning
 
 ### Audio Classification
 
-* The classifier [ResNet50AudioClassifier](keras_audio/library/resnet.py) converts audio into mel-spectrogram and uses the resnet-50
-DCnn architecture to classifier audios based on its associated labels. 
+* The classifier [ResNetV2AudioClassifier](keras_audio/library/resnet_v2.py) converts audio into mel-spectrogram and uses a simplified
+ resnet DCnn architecture to classifier audios based on its associated labels. 
 * The classifier [Cifar10AudioClassifier](keras_audio/library/cifar10.py) converts audio into mel-spectrogram and uses the cifar-10
+DCnn architecture to classifier audios based on its associated labels. 
+* The classifier [ResNet50AudioClassifier](keras_audio/library/resnet50.py) converts audio into mel-spectrogram and uses the resnet-50
 DCnn architecture to classifier audios based on its associated labels. 
 
 The classifiers differ from those used in image classification in that:
@@ -16,9 +18,10 @@ The classifiers differ from those used in image classification in that:
 * they have elongated max pooling shape (as the mel-spectrogram is elongated "image")
 * Dropout being added 
 
-# Usage
 
-### Audio Classification
+# Usage: Audio Classification
+
+### Train a audio classifier
 
 The audio classification uses [Gtzan](http://opihi.cs.uvic.ca/sound/genres.tar.gz) data set to train the
 music classifier to recognize the genre of songs. 
@@ -81,11 +84,17 @@ After training, the trained models are saved to [demo/models](demo/models).
 * The training accuracy after 100 epochs is 98.13%, with validation accuracy of 71%. 
 
 
-Below shows the training progress:
+### Model Comparison
+
+Currently [ResNet50AudioClassifier](keras_audio/library/resnet50.py) is too expensive to run on my hardware (OOM exception
+from GPU), but [ResNetV2AudioClassifier](keras_audio/library/resnet_v2.py) did give competitive result to that of
+[Cifar10AudioClassifier](keras_audio/library/cifar10.py). Below compares training quality of 
+[ResNetV2AudioClassifier](keras_audio/library/resnet_v2.py) and [Cifar10AudioClassifier](keras_audio/library/cifar10.py):
 
 ![training-comppare](demo/models/training-history-comparison.png)
 
 
+### Test trained model
 
 To test the trained Cifar10AudioClassifier model, run the following command:
 
@@ -196,5 +205,7 @@ python cifar10_tensorflow_classifier.py
 The script [demo/cifar10_tensorflow_classifier.py](demo/cifar10_tensorflow_classifier.py) uses pure tensorflow code
 to load the [cifar10.pb](demo/models/tensorflow_models/cifar10/cifar10.pb) and uses it to predict genres of the 
 songs
+
+
 
 
