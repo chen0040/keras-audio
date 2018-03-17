@@ -87,8 +87,7 @@ After training, the trained models are saved to [demo/models](demo/models).
 ### Model Comparison
 
 Currently [ResNet50AudioClassifier](keras_audio/library/resnet50.py) is too expensive to run on my hardware (OOM exception
-from GPU), but [ResNetV2AudioClassifier](keras_audio/library/resnet_v2.py) did give competitive result to that of
-[Cifar10AudioClassifier](keras_audio/library/cifar10.py). Below compares training quality of 
+from GPU). Below compares training quality of 
 [ResNetV2AudioClassifier](keras_audio/library/resnet_v2.py) and [Cifar10AudioClassifier](keras_audio/library/cifar10.py):
 
 ![training-comppare](demo/models/training-history-comparison.png)

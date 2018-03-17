@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 
 def main():
     model_dir_path = './models'
-    models = ['cifar10']
+    models = ['cifar10', 'resnet-v2']
     acc_cmp = dict()
     val_acc_cmp = dict()
     labels = list()
