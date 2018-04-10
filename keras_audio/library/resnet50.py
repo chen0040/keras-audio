@@ -1,7 +1,6 @@
 from lru import LRU
 
 import keras.backend as K
-import tensorflow as tf
 from keras.callbacks import ModelCheckpoint
 from keras.initializers import glorot_uniform
 from keras.layers import Input, Add, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv2D, \
